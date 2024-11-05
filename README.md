@@ -181,7 +181,7 @@ This project focus on studying what kind of companies success. Therefore, we are
     1. using dynamic SQL queries to generate the queries for creating the wide `company_analytics` table. The purpose is to automate table creation based on the content of industry and programs.
 
 #### Stored Procedure Update_Industry_Column and Update_Program_Column
-After the analytical table has been created and data has been filled in except for indutry and program boolean columns, these two procedures are designed to fill in the industry and program information. The two procedures mainly use dynamic queries. This step demostrates transform and load.
+After the analytical table has been created and data has been filled in except for indutry and program boolean columns, these two procedures are designed to rename the industry and program columns and fill in the industry and program information. The two procedures mainly use dynamic queries. This step demostrates transform and load.
 
 ### Trigger
 For the purpose of show case, a simple trigger is created. This is a trigger of actions when inserting new rows to the analytical table `company`. When a new row is inserted in the analytical table `company_analytics`. So this trigger functions as a mapping tool and updating tool that attempts to do an updated partial ETL when the new data is entered. The same logic goes for other data entry for other tables. 
@@ -220,9 +220,14 @@ Columns starts with IDTY_ are the industries; columns starts with UNI_ are the u
 
 ### Procedures and Views for Analysis
 
-The Stored Procedure relevant for analysis: 
+#### The Stored Procedures for data manipulation and ETL: 
 
 - ETL_Company_Analysis: The main procedure for ETL process
+- Update_Industry_Columns: this is to add "IDTY_" in front of industry relevant columns. By adding a prefix, it is easier to get the values of certain industries. Boolean data are filled in. 
+- Update_Program_Columns: same use cases as `Update_Industry_Columns` but for the Program relevant columns by adding "UNI_" as a prefix. Boolean data are filled in. 
+- AlterColumnNames: part of the data normalization process when creating more tables for the data intergrity purposes.
+
+#### Stored Procedures for Analysis (reading data only):
 - GetSuccessfulStartups: to get the unique successful startups to call the ranking calls more easily.
 - GetUniqueCountries: to get the unique unique countries to call the ranking calls more easily.
 - GetUniqueIndustries:to get the unique industries to call the ranking calls more easily.
@@ -232,11 +237,13 @@ The Stored Procedure relevant for analysis:
 - RankIndustriesBySuccessIndex: to get the successful companys based on listing the industry. This allows user to analysis which industry tends to increase startups' chance to success.
 - RankProgramCategoryBySuccessIndex: same use cases as `RankIndustriesBySuccessIndex`
 - RankUniversitiesRankingBySuccessIndex:same use cases as `RankIndustriesBySuccessIndex`
-- Update_Industry_Columns: this is to add "IDTY_" in front of industry relevant columns. By adding a prefix, it is easier to get the values of certain industries. 
-- Update_Program_Columns: same use cases as `Update_Industry_Columns` but for the Program relevant columns by adding "UNI_" as a prefix.
-- AlterColumnNames: part of the data normalization process when creating more tables for the data intergrity purposes.
 
-
+### Analytical Table Dimensions
+<div align="center">
+  <a>
+    <img src="analytical_dimensions.png" alt="Logo" width="800" height="350">
+  </a>
+</div>
 
 <!-- CONTRIBUTING -->
 ## Contributing
