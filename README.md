@@ -73,8 +73,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-
-This project aims to analyze the profiles of young, successful companies, including examples like Airbnb, GitLab, and Amplitude. Using data from Kaggle's [2024 YCombinator All Companies Datase](https://www.kaggle.com/datasets/sashakorovkina/ycombinator-all-funded-companies-dataset?resource=download&select=badges.csv), the project imports and normalizes data tables into MySQL Workbench.
+This project aims to build a comprehensive SQL database from an operational data layer to an analytical data layer, providing a foundation for potential analysis of young, successful companies like Airbnb, GitLab, and Amplitude. The project focuses on integrating various SQL concepts learned throughout the course to demonstrate how each component fits into a larger database architecture and analytics pipeline. Using data from Kaggle's [2024 YCombinator All Companies Datase](https://www.kaggle.com/datasets/sashakorovkina/ycombinator-all-funded-companies-dataset?resource=download&select=badges.csv), the project built an analytical layer tables with MySQL Workbench, ETL, stored procedures, triggers, and data marts.
 
 The project involves:
 * Data normalization and ETL processes to create a comprehensive analytical table.
@@ -147,6 +146,94 @@ To set up the database structure and create necessary relationship, stored proce
 
 The final structure includes 14 relational tables, 1 analytical table, 5 views, and 15 stored procedures.
 
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+<!--Analytical Plan-->
+## Analytical Plan
+
+This section outlines how the resulting database will be used to explore the factors influencing the success of young companies.
+
+### Industry and Region-Based Analysis
+
+The `RankIndustriesBySuccessIndex` and `RankCountriesAndRegions` stored procedures allow for investigating how different industries and regions impact the likelihood of success among young companies:
+
+* Identify which industries have the highest average success index, providing insight into industry-specific success patterns.
+* Analyze geographic trends to see if startups from certain regions or countries have higher success rates.
+
+#### Key Metrics:
+
+* SuccessIndex by Industry
+* SuccessIndex by Region and Country
+
+### Educational Background Analysis
+
+Using procedures such as `RankProgramCategoryBySuccessIndex` and `RankUniversitiesRankingBySuccessIndex`, the educational backgrounds of founders can be explored to determine how these impact company success:
+
+* Determine the success index of companies founded by individuals from top-ranked universities or those with specific program backgrounds.
+* Explore if specific educational backgrounds (e.g., STEM vs. humanities) correlate with higher company success.
+
+#### Key Metrics
+
+* SuccessIndex by University Ranking
+* SuccessIndex by Program Category
+
+
+### Database Architecture:
+
+1. Analytical Data Layer
+
+The analytical data layer provides a well-structured foundation for performing advanced analysis. This layer will contain:
+
+* Analytical Tables: Aggregated and preprocessed tables focused on key metrics like SuccessIndex, Industry, Region, and educational attributes of founders. These tables should:
+	* Contain aggregated data on SuccessIndex across various dimensions, such as Industry, Region, University, and Program Category.
+  * Include necessary joins with related tables like company, industry, region, and founder to allow quick retrieval of the desired analytics attributes.
+* Views: Views are used to simplify access to frequently queried data. Key views include:
+  * Industry and Region Views: Views focused on SuccessIndex by Industry and by Region or Country, pre-aggregating data to streamline analysis.
+  * Educational Background Views: A view summarizing educational attributes (e.g., university rankings, program categories) linked to SuccessIndex, helping analysts understand how education relates to startup success.
+
+2. ETL (Extract, Transform, Load) Processes
+
+The ETL process transforms operational data into a structured analytical format, ensuring data consistency and preparing data for analysis. Key steps include:
+
+* Extract:
+	* Load raw data from source files (companies.csv, founders.csv, industries.csv, etc.).
+	* Extracting key information from tables and files (e.g., mapping university names using BERT for standardization).
+* Transform:
+	* Data Cleansing and Standardization: Standardizing names, especially educational institution names, using cosine similarity and the BERT LLM model to map variations to the QS rank.
+	* Success Index Calculation: Use stored procedures to calculate SuccessIndex based on predefined criteria and load it into the analytical table.
+	* Data Aggregation and Normalization: Aggregate data by creating relationships and normalizing tables like programs, institutions, and regions to ensure data integrity and optimize the database for analytical use.
+* Load:
+	* Insert transformed and aggregated data into the analytical tables designed for the industry, region, and educational analysis.
+	* Load data into the company_analytics table, a centralized analytical table containing relevant metrics for easy querying.
+
+3. Data Mart Structure
+
+Data marts are created to facilitate domain-specific analytics, making it easier for stakeholders to access and analyze the data efficiently. This database will support multiple data marts:
+
+* Industry and Regional Data Mart:
+	* Purpose: Enables analysis of SuccessIndex by industry and geographic region.
+	* Data Structure: Aggregated tables that summarize SuccessIndex by Industry and Region/Country dimensions.
+	* Key Stored Procedures: RankIndustriesBySuccessIndex and RankCountriesAndRegions, which rank industries and regions based on average success indices.
+* Educational Data Mart:
+	* Purpose: Focuses on understanding the impact of founders’ educational background on company success.
+	* Data Structure: Tables summarizing SuccessIndex by University Ranking and Program Category, enabling analyses of educational factors.
+	* Key Stored Procedures: RankProgramCategoryBySuccessIndex, RankUniversitiesRankingBySuccessIndex, which analyze how specific programs or university rankings correlate with success.
+* Company Characteristics Data Mart:
+	* Purpose: Provides insights into how various company characteristics, such as program categories and founder backgrounds, correlate with startup success.
+* Data Structure: Includes tables that store tag and badge data related to company traits.
+	* Key Stored Procedures: GetSuccessfulStartups, RankUniversitiesBySuccessIndex help identify common characteristics of highly successful companies by combining attributes from tags, badges, and educational factors.
+
+
+This setup of the analytical data layer, ETL process, and Data Marts will enable streamlined and efficient exploration of the outlined key metrics, supporting deeper insights into industry trends, educational impacts, and company characteristics related to success.
+
+### Analytical Plan Dimensions
+<div align="center">
+  <a>
+    <img src="analytical_dimensions.png" alt="Logo" width="800" height="350">
+  </a>
+</div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -267,12 +354,7 @@ Columns starts with IDTY_ are the industries; columns starts with UNI_ are the u
 - RankProgramCategoryBySuccessIndex: same use cases as `RankIndustriesBySuccessIndex`
 - RankUniversitiesRankingBySuccessIndex:same use cases as `RankIndustriesBySuccessIndex`
 
-### Analytical Table Dimensions
-<div align="center">
-  <a>
-    <img src="analytical_dimensions.png" alt="Logo" width="800" height="350">
-  </a>
-</div>
+
 
 <!-- CONTRIBUTING -->
 ## Contributing
