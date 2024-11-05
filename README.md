@@ -111,7 +111,7 @@ To set up the database structure and create necessary relationship, stored proce
 ### Data Structure Preview - ER Diagram
 <div align="center">
   <a>
-    <img src="ER_Diagram.png" alt="Logo" width="1000" height="300">
+    <img src="ER_Diagram.png" alt="Logo" width="1000" height="400">
   </a>
 </div>
   
