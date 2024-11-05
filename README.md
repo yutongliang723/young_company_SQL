@@ -4,23 +4,11 @@
 <br />
 <div align="center">
   <a href="https://github.com/yutongliang723/young_company_SQL/blob/main/README.md">
-    <img src="yc_image.png" alt="Logo" width="200" height="100">
+    <img src="yc_image.png" alt="Logo" width="800" height="300">
   </a>
 
   <h3 align="center">Young Companies SQL </h3>
 
-  <p align="center">
-    Find out the success factors for startups.
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
-  </p>
 </div>
 
 
@@ -57,13 +45,14 @@
 ## About The Project
 
 
-This project is designated to understand the profile of young companies, especially for those which are  "succcessful". For example, Airbnb, GitLab, Amplitude, etc.
+This project aims to analyze the profiles of young, successful companies, including examples like Airbnb, GitLab, and Amplitude. Using data from Kaggle's [2024 YCombinator All Companies Datase](https://www.kaggle.com/datasets/sashakorovkina/ycombinator-all-funded-companies-dataset?resource=download&select=badges.csv), the project imports and normalizes data tables into MySQL Workbench.
 
-Here is the general steps for the project:
-* This project takes the data from Kaggle [2024 YCombinator All Companies Datase](https://www.kaggle.com/datasets/sashakorovkina/ycombinator-all-funded-companies-dataset?resource=download&select=badges.csv) and import the relevant tables into MYSQLWorkbench and performed normalization.
+The project involves:
+* Data normalization and ETL processes to create a comprehensive analytical table.
 * For the university table, the original university names are mapped into the standard QS table using cosine similarity with BERT LLM model.
-* ETL (Extract, Transform, Load) is performed for the operational layer data by creating success index for the companys and joining the relevant dimensions. The result is loaded into the analytical layer with a table representation.
-* Several procedures are created for the purpose of analysing such as `RankUniversitiesBySuccessIndex` or `RankProgramCategoryBySuccessIndex`. In the end, several views are created as data marts based on the analytical procedures.
+* ETL (Extract, Transform, Load) is performed for the operational layer data by creating success indices for the companys and joining the relevant dimensions. The result is loaded into the analytical layer with in a table format.
+* Creation of stored procedures for data ranking and analysis such as `RankUniversitiesBySuccessIndex` or `RankProgramCategoryBySuccessIndex`.
+* Views and data marts that organize data based on specific analytical needs.
 
 This project functions primarily as the bulding database and data preperation startpoint. Further analytics are expected to be done with other tools.
 
@@ -86,46 +75,48 @@ Use the `README.md` to get started.
 <!-- GETTING STARTED -->
 ## Getting Started
 
-### Prerequisites
-
-To comply with the file reading process in MySQLWorkbench, one needs to run two scripts in MySQLWorkbench to set up the necessary environment.
-
-```
-SHOW VARIABLES LIKE "local_infile";
-SHOW VARIABLES LIKE "secure_file_priv";
-```
-The first command results should `= ON` and the second command result should be the path which store the files to be read later.  
-
-Suppose the path mentioned above is `/private/tmp/`, then run the following commands in the terminal. 
-
 ### Preperation
 
-Download the folder named `young_company` first and locate to that folder before running the commands. 
+Download the folder named `young_company` or clone the whole repository first and locate to that folder before running the commands. 
 
-The following commands is the bash example:
+### Prerequisites
 
-```
-cp badges.csv companies.csv founders.csv industries.csv prior_companies.csv regions.csv schools.csv tags.csv /private/tmp/
-```
+To ensure MySQL Workbench can access files correctly, you’ll need to check and set specific environment variables.
+
+1. Run the following commands in MySQL Workbench:
+  ```
+  SHOW VARIABLES LIKE "local_infile";
+  SHOW VARIABLES LIKE "secure_file_priv";
+  ```
+The first command results should `= ON` and the second command result should be the path which store the files to be read later.  
+
+2. Assuming the path mentioned above is `/private/tmp/`, then run the following commands in the terminal. The following commands is the bash example:
+
+  ```
+  cp badges.csv companies.csv founders.csv industries.csv prior_companies.csv regions.csv schools.csv tags.csv /private/tmp/
+  ```
+
+3. If “local_infile” is not `ON` or “secure_file_priv” is `NULL`, you need to change my.cnf (Mac,Linux) or my.ini (Windows) - _class material_. 
+
 This step allows the relevant files to be put in the correct place.
-
-If “local_infile” is not `ON` or “secure_file_priv” is `NULL`, you need to change my.cnf (Mac,Linux) or my.ini (Windows) - _class material_. 
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+To set up the database structure and create necessary relationship, stored procedures, and view:
 
-Open the file `YC_production.sql` in MySQLWorkbench and run it, the table structure should be set up. The run time is expected to be 30 seconds.
+1. Open the file `YC_production.sql` in MySQLWorkbench
+2. Run the script. The setup should complete in approximately 30 seconds.
+
 
 ### Data Structure Preview - ER Diagram
 <div align="center">
   <a>
-    <img src="ER_Diagram.png" alt="Logo" width="350" height="200">
+    <img src="ER_Diagram.png" alt="Logo" width="1000" height="300">
   </a>
 </div>
   
 
-At an end result, we have 14 relational tables, 1 analytical table, 5 views, and 15 store procedures.
+The final structure includes 14 relational tables, 1 analytical table, 5 views, and 15 stored procedures.
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -134,7 +125,12 @@ At an end result, we have 14 relational tables, 1 analytical table, 5 views, and
 ## Details
 
 ### Data Structure
-Looking into the details of the young company data structure, before normalizing, we have eight main tables: `company, founders, regions, industries, badges, tags, schools, prior_companies`. Company and founders is one to many relationship. The same works for company and industris. 'badges' and 'tags' describes the characteristics and value of the company such as "highlightWomen", "nonprofit", "topCompany", etc. For the sake of the data integrity, I normalized `schools` to `programs`, `institutions`, and `qs_rank`; `badges` to `badges` and `companybadge`; `tags` to `tag` and `company_tag`; `industries` to `industry` and `company_industry`
+The main tables before normalization include before normalizing includes: `company, founders, regions, industries, badges, tags, schools, prior_companies`. Company and founders is one to many relationship. The same works for company and industris. 'badges' and 'tags' describes the characteristics and value of the company such as "highlightWomen", "nonprofit", "topCompany", etc. 
+
+### Normalization
+For the sake of the data consistency and reduce data redundancy, `schools` is normalized to `programs`, `institutions`, and `qs_rank`; `badges` to `badges` and `companybadge`; `tags` to `tag` and `company_tag`; `industries` to `industry` and `company_industry`
+
+### Key Tables
 
 * `company`: RowNumber, CompanyId’, ‘CompanyName’, ‘slug’, ‘website’, ‘smallLogoUrl’, ‘oneLiner’, ‘longDescription’, ‘teamSize’, ‘url’, ‘batch’, ‘status’;
 *  `founders`: ‘first_name’, ‘last_name’, ‘hnid’, ‘avartar_thumb’, ‘current_company’, ‘current_title’, ‘company_slug’, ‘top_company’;
@@ -151,9 +147,9 @@ Looking into the details of the young company data structure, before normalizing
 * `company_industry`:’CompanyId’, ‘IndustryId’;
 * `companybadge`: ‘CompanyBadgeId’, ‘CompanyId’, ‘BadgeId’
 
-### Mapping Procedure
+### Mapping Process
 
-In the raw dataset, `schools` table's 'school' column which records the university's names young companies founders attended, do not have the standard name. Therefore, there was no quantitative data available for the university. To map the universities to the standard QS Ranking names and map them with ranking score, cosine similarity is used to map the universities to their standard names with Sentence-BERT model. Given the high variation of some input university names, the final mapping results is around 30%. The mapping was done with Python - `mapping_qs.ipynb`. The output query was copy-pasted to the SQL file. Example univeristy name mapping query:
+In the raw dataset, `schools` table's 'school' column which records the university's names which young companies founders attended, do not have the standard name. Therefore, there was no quantitative data available for the university. These names were mapped to QS World University Rankings using Sentence-BERT for cosine similarity Around 30% of universities were successfully mapped due to the high variability of input data. The mapping was done with Python - `mapping_qs.ipynb`. The output query generated in Python was copy-pasted to the SQL file. Example univeristy name mapping query:
 
 ```
 UPDATE young_company.schools SET school = 'Trinity College Dublin, The University of Dublin' WHERE school = 'university of dublin, trinity college';
@@ -174,7 +170,21 @@ Industry can be directly manipulted by pivoting the unique row values. However, 
     ```
     Prompt: create 15 names of those 50 clusters, such as computer science, mathemetics, .... that will be further cosine similarity friendly.
     ```
+### ETL (Extract, Transform, Load)
+This project focus on studying what kind of companies success. Therefore, we are operating the ETL based on the unit of company and its relevant attributes. We denormalize the attribues and aggregate them into the analytical table `company_analytics`:  
+#### Stored Procedure: ETL_Company_Analytics:
+1. Creating company SuccessIndex: there are two relevant attributes that can "tell" if a company is success or not. This step demonstrates extract and transform
+    1. if the company 'status' is 'Active' or 'Public' instead of 'Inactive' or 'Acquired';
+    2. if the company 'badge' is 'topCompany' or 'Hiring'.
+2. Joining company table on all other relevant tables based on companyId or founder id which is hnid. Note that, founder to company can be many-to-many relationship, therefore, we use comma seperate value to store the multiples values for one company. This step demostrate extract and load.
+3. Piviting 'industry' and 'program' row to Boolean columns: as described in the topic modelling and topic generating parts, it is necessary to cluster and convert industry and program to columns in this context. The topic generation and topic modelling are done outside SQL with Python and GPT, we will not aim to reproduce that part. This step demostract transform.
+    1. using dynamic SQL queries to generate the queries for creating the wide `company_analytics` table. The purpose is to automate table creation based on the content of industry and programs.
 
+#### Stored Procedure Update_Industry_Column and Update_Program_Column
+After the analytical table has been created and data has been filled in except for indutry and program boolean columns, these two procedures are designed to fill in the industry and program information. The two procedures mainly use dynamic queries. This step demostrates transform and load.
+
+### Trigger
+For the purpose of show case, a simple trigger is created. This is a trigger of actions when inserting new rows to the analytical table `company`. When a new row is inserted in the analytical table `company_analytics`. So this trigger functions as a mapping tool and updating tool that attempts to do an updated partial ETL when the new data is entered. The same logic goes for other data entry for other tables. 
 ## Result 
 
 After ETL operation, one anlaytical layer is achieved with one dataware house table `company_analytics`in the same schema. The columns are:
