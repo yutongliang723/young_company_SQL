@@ -26,19 +26,48 @@
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
+        <li><a href="#preparation">Preparation</a></li>
         <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
+    <li>
+      <a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#data-structure-preview---er-diagram">Data Structure Preview - ER Diagram</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#details">Details</a>
+      <ul>
+        <li><a href="#data-structure">Data Structure</a></li>
+        <li><a href="#normalization">Normalization</a></li>
+        <li><a href="#key-tables">Key Tables</a></li>
+        <li><a href="#mapping-process">Mapping Process</a></li>
+        <li><a href="#topic-modelling">Topic Modelling</a></li>
+        <li><a href="#etl-extract-transform-load">ETL (Extract, Transform, Load)</a></li>
+        <ul>
+          <li><a href="#stored-procedure-etl_company_analytics">Stored Procedure: ETL_Company_Analytics</a></li>
+          <li><a href="#stored-procedure-update_industry_column-and-update_program_column">Stored Procedure: Update_Industry_Column and Update_Program_Column</a></li>
+        </ul>
+        <li><a href="#trigger">Trigger</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#result">Result</a>
+      <ul>
+        <li><a href="#procedures-and-views-for-analysis">Procedures and Views for Analysis</a></li>
+        <ul>
+          <li><a href="#stored-procedures-for-data-manipulation-and-etl">Stored Procedures for Data Manipulation and ETL</a></li>
+          <li><a href="#stored-procedures-for-analysis-reading-data-only">Stored Procedures for Analysis (reading data only)</a></li>
+        </ul>
+        <li><a href="#analytical-table-dimensions">Analytical Table Dimensions</a></li>
+      </ul>
+    </li>
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
-
 
 
 <!-- ABOUT THE PROJECT -->
@@ -172,7 +201,7 @@ Industry can be directly manipulted by pivoting the unique row values. However, 
     ```
 ### ETL (Extract, Transform, Load)
 This project focus on studying what kind of companies success. Therefore, we are operating the ETL based on the unit of company and its relevant attributes. We denormalize the attribues and aggregate them into the analytical table `company_analytics`:  
-#### Stored Procedure: ETL_Company_Analytics:
+#### Stored Procedure: ETL_Company_Analytics
 1. Creating company SuccessIndex: there are two relevant attributes that can "tell" if a company is success or not. This step demonstrates extract and transform
     1. if the company 'status' is 'Active' or 'Public' instead of 'Inactive' or 'Acquired';
     2. if the company 'badge' is 'topCompany' or 'Hiring'.
