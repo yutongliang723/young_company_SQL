@@ -64,7 +64,7 @@
 This project is designated to understand the profile of young companies, especially for those which are  "succcessful". For example, Airbnb, GitLab, Amplitude, etc.
 
 Here is the general steps for the project:
-* This project takes the data from Kaggle "2024 YCombinator All Companies Dataset" and import the relevant tables into MYSQLWorkbench and performed normalization.
+* This project takes the data from Kaggle [2024 YCombinator All Companies Datase](https://www.kaggle.com/datasets/sashakorovkina/ycombinator-all-funded-companies-dataset?resource=download&select=badges.csv) and import the relevant tables into MYSQLWorkbench and performed normalization.
 * For the university table, the original university names are mapped into the standard QS table using cosine similarity with BERT LLM model.
 * ETL (Extract, Transform, Load) is performed for the operational layer data by creating success index for the companys and joining the relevant dimensions. The result is loaded into the analytical layer with a table representation.
 * Several procedures are created for the purpose of analysing such as `RankUniversitiesBySuccessIndex` or `RankProgramCategoryBySuccessIndex`. In the end, several views are created as data marts based on the analytical procedures.
@@ -116,36 +116,119 @@ This step allows the relevant files to be put in the correct place.
 If “local_infile” is not `ON` or “secure_file_priv” is `NULL`, you need to change my.cnf (Mac,Linux) or my.ini (Windows) - _class material_. 
 
 
-
-
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 
 Open the file `YC_production.sql` in MySQLWorkbench and run it, the table structure should be set up. The run time is expected to be 30 seconds.
 
+### Data Structure Preview - ER Diagram
+<div align="center">
+  <a>
+    <img src="ER_Diagram.png" alt="Logo" width="350" height="200">
+  </a>
+</div>
+  
+
+At an end result, we have 14 relational tables, 1 analytical table, 5 views, and 15 store procedures.
+
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- DETAILS -->
+## Details
 
+### Data Structure
+Looking into the details of the young company data structure, before normalizing, we have eight main tables: `company, founders, regions, industries, badges, tags, schools, prior_companies`. Company and founders is one to many relationship. The same works for company and industris. 'badges' and 'tags' describes the characteristics and value of the company such as "highlightWomen", "nonprofit", "topCompany", etc. For the sake of the data integrity, I normalized `schools` to `programs`, `institutions`, and `qs_rank`; `badges` to `badges` and `companybadge`; `tags` to `tag` and `company_tag`; `industries` to `industry` and `company_industry`
 
-<!-- ROADMAP -->
-## Roadmap
+* `company`: RowNumber, CompanyId’, ‘CompanyName’, ‘slug’, ‘website’, ‘smallLogoUrl’, ‘oneLiner’, ‘longDescription’, ‘teamSize’, ‘url’, ‘batch’, ‘status’;
+*  `founders`: ‘first_name’, ‘last_name’, ‘hnid’, ‘avartar_thumb’, ‘current_company’, ‘current_title’, ‘company_slug’, ‘top_company’;
+* `regions`: ‘RowNumber’, ‘CompanyId’, ‘region’, ‘country’, ‘address’;
+* `industry`: ‘IndustryId’, ‘IndustryName’;
+* `badges`: ‘BadgeId’, ‘Badge’;
+* `tag`: ‘tagId’, ‘tagName’;
+* `program`:’program_id’, ‘program_name’, ‘program_category’;
+* `prior_companies`: ‘hnid’, ‘company’
+* `qs_rank`: ‘RowNumber’, ‘rank_2024’, ‘instituion’, ‘location’;
+* `institutions`: ‘institution_id’, ‘institution_name’;
+* `enrollment`:’enrollment_id’, ‘institution_id’, ‘program_id’, ‘year’, ‘hnid’;
+* `company_tag`: ‘CompanyId’, ‘tagId’;
+* `company_industry`:’CompanyId’, ‘IndustryId’;
+* `companybadge`: ‘CompanyBadgeId’, ‘CompanyId’, ‘BadgeId’
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
+### Mapping Procedure
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+In the raw dataset, `schools` table's 'school' column which records the university's names young companies founders attended, do not have the standard name. Therefore, there was no quantitative data available for the university. To map the universities to the standard QS Ranking names and map them with ranking score, cosine similarity is used to map the universities to their standard names with Sentence-BERT model. Given the high variation of some input university names, the final mapping results is around 30%. The mapping was done with Python - `mapping_qs.ipynb`. The output query was copy-pasted to the SQL file. Example univeristy name mapping query:
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+```
+UPDATE young_company.schools SET school = 'Trinity College Dublin, The University of Dublin' WHERE school = 'university of dublin, trinity college';
+
+UPDATE young_company.schools SET school = 'College of William and Mary' WHERE school = 'William & Mary';
+```
+
+### Topic Modelling
+
+During the ETL process of creating analytical layer, 'industry' column in the `industries` table which describes the industry of the young company and the 'field_of_study' column in the `schools` table are further transformed. 
+
+Given that industry and company variables are many-to-many relationship, which is the same situation for the field of study variable, they are transposed from row values to column values - the company with that certain industry or of the founders have have been enrolled in that university program `= 1`, else, `= 0`. 
+
+Industry can be directly manipulted by pivoting the unique row values. However, for field of study, the vast amount of distinct values (> 1000) requires the topic generation and topic modelling process.  
+* Topic generation: 15 topics are generated after using TF-IDF dimensionality with TruncatedSVD in Python and GPT prompt engineering with chatGPT.  
+  * TF-IDF dimensionality: reduce dimensionality to 50 groups of study topics and doing clustering with K-Means;
+  * Prompt Engineering: using chatGPT -4o to further reduce the clusters into 15:
+    ```
+    Prompt: create 15 names of those 50 clusters, such as computer science, mathemetics, .... that will be further cosine similarity friendly.
+    ```
+
+## Result 
+
+After ETL operation, one anlaytical layer is achieved with one dataware house table `company_analytics`in the same schema. The columns are:
+
+'CompanyId'
+'CompanyName'
+'SuccessIndex'
+'Region'
+'Country'
+'FounderPriorCompanies'
+'FirstEnrollmentYear'
+'TotalEnrollmentYears'
+'CompanyTags'
+'CompanyHighlight'
+'Founders'
+'UniPrograms'
+'ProgramCategory'
+'Institutions'
+'UniHighestRank'
+'CompanyStatus'
+'CompanySlug'
+'Industries'
+'IDTY_AGRICULTURE'
+'IDTY_ANALYTICS'
+...
+'IDTY_TRAVEL_LEISURE_AND_TOURISM'
+'IDTY_VIRTUAL_AND_AUGMENTED_REALITY'
+'UNI_ENGINEERING_'
+...
+'UNI_BANKING_AND_FINANCE_SPECIALIZATION'
+
+Columns starts with IDTY_ are the industries; columns starts with UNI_ are the university programs.
+
+### Procedures and Views for Analysis
+
+The Stored Procedure relevant for analysis: 
+
+- ETL_Company_Analysis: The main procedure for ETL process
+- GetSuccessfulStartups: to get the unique successful startups to call the ranking calls more easily.
+- GetUniqueCountries: to get the unique unique countries to call the ranking calls more easily.
+- GetUniqueIndustries:to get the unique industries to call the ranking calls more easily.
+- GetUniqueRegions: to get the unique regions to - call the ranking calls more easily.
+- GetUniqueUniversities: to get the unique universities to call the ranking calls more easily.
+- RankCountriesAndRegions: to get successful company counts/index by filtering to countries or regions. For example, `CALL RankCountriesAndRegions('Country', 'United States of America')` or `CALL RankCountriesAndRegions('Region', NULL)`
+- RankIndustriesBySuccessIndex: to get the successful companys based on listing the industry. This allows user to analysis which industry tends to increase startups' chance to success.
+- RankProgramCategoryBySuccessIndex: same use cases as `RankIndustriesBySuccessIndex`
+- RankUniversitiesRankingBySuccessIndex:same use cases as `RankIndustriesBySuccessIndex`
+- Update_Industry_Columns: this is to add "IDTY_" in front of industry relevant columns. By adding a prefix, it is easier to get the values of certain industries. 
+- Update_Program_Columns: same use cases as `Update_Industry_Columns` but for the Program relevant columns by adding "UNI_" as a prefix.
+- AlterColumnNames: part of the data normalization process when creating more tables for the data intergrity purposes.
 
 
 
@@ -165,29 +248,19 @@ Don't forget to give the project a star! Thanks again!
 
 ### Top contributors:
 
-<a href="https://github.com/othneildrew/Best-README-Template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=othneildrew/Best-README-Template" alt="contrib.rocks image" />
+<a href="https://github.com/yutongliang723/young_company_SQL/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=yutongliang723/young_company_SQL" />
 </a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
-<!-- LICENSE -->
-## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Yutong Liang - liang_yutong@student.ceu.edu
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/yutongliang723/young_company_SQL](https://github.com/yutongliang723/young_company_SQL)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
