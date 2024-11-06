@@ -253,7 +253,7 @@ This setup of the analytical data layer, ETL process, and Data Marts will enable
 ### Analytical Plan Dimensions
 <div align="center">
   <a>
-    <img src="analytical_dimensions.png" alt="Logo" width="800" height="350">
+    <img src="analytical_dimensions.png" alt="Logo" width="800" height="400">
   </a>
 </div>
 
