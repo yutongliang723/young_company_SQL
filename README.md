@@ -83,7 +83,7 @@
           <li><a href="#stored-procedures-for-data-manipulation-and-etl">Stored Procedures for Data Manipulation and ETL</a></li>
           <li><a href="#stored-procedures-for-analysis-reading-data-only">Stored Procedures for Analysis (reading data only)</a></li>
         </ul>
-        <li><a href="#analytical-table-dimensions">Analytical Table Dimensions</a></li>
+        <li><a href="#Analysis">Analysis</a></li>
       </ul>
     </li>
     <li><a href="#contributing">Contributing</a></li>
@@ -392,7 +392,55 @@ Columns starts with IDTY_ are the industries; columns starts with UNI_ are the u
 - RankProgramCategoryBySuccessIndex: same use cases as `RankIndustriesBySuccessIndex`
 - RankUniversitiesRankingBySuccessIndex:same use cases as `RankIndustriesBySuccessIndex`
 
+### Analysis
 
+| Region           | Successful Companies Count | Total Success Index | Ranking |
+|------------------|---------------------------|----------------------|---------|
+| America / Canada | 3347                      | 5790                 | 1       |
+| Europe           | 329                       | 525                  | 2       |
+| Latin America    | 198                       | 415                  | 3       |
+| South Asia       | 209                       | 366                  | 4       |
+
+| Country                  | Successful Companies Count | Total Success Index | Ranking |
+|--------------------------|---------------------------|----------------------|---------|
+| United States of America | 3307                      | 5755                | 1       |
+| India                    | 205                       | 363                 | 3       |
+| United Kingdom           | 151                       | 257                 | 4       |
+| Canada                   | 136                       | 222                 | 5       |
+| Remote                   | 111                       | 219                 | 6       |
+| Mexico                   | 83                        | 175                 | 7       |
+
+
+| Industry                         | Successful Founders Count | Total Success Index |
+|----------------------------------|---------------------------|----------------------|
+| B2B                              | 3964                      | 7043                |
+| Consumer                         | 1424                      | 2260                |
+| Fintech                          | 1053                      | 2078                |
+| Healthcare                       | 988                       | 1847                |
+| Engineering, Product, and Design | 803                       | 1309                |
+| Industrials                      | 449                       | 784                 |
+
+| Uni Program                               | Total Success Index |
+|-------------------------------------------|----------------------|
+| UNI_SOFTWARE_AND_COMPUTER_ENGINEERING     | 2376                 |
+| UNI_ENGINEERING_                          | 1521                 |
+| UNI_MARKETING_AND_ECONOMICS               | 818                  |
+| UNI_MATHEMATICS_AND_FINANCE               | 641                  |
+| UNI_GENERAL_SCIENCES                      | 453                  |
+| UNI_INFORMATION_AND_DATA_MANAGEMENT       | 431                  |
+| UNI_MOLECULAR_AND_BIOLOGICAL_SCIENCES     | 333                  |
+</n>
+  
+  
+Tables above are part of the data view results from four dimensions - company region, company country, company industry, and company founders' university programs.  
+
+As observed, America / Canada region specially USA have the highest aggregated success index for the startup. On the one hand, this could be a statistic bias in terms of data collection. However, it represents the general phenomenon given other sources of information such as [StartupBlink](https://www.startupblink.com/blog/top-20-countries-by-total-startup-output-in-2023/) which has USA, China, UK, India, Canada ranked as the top startup countries by total startup output. These countries have more distinguished startup ecosystem. 
+
+The analysis also shows that industries like B2B, Consumer, Fintech, Healthcare, Engineering & Product Design, and Industrials are key drivers of startup success. Among these, B2B stands out as the most dominant sector, with the highest number of successful startups and a strong success index. This highlights the increasing demand for business-to-business solutions across various markets.
+
+Consumer and Fintech also demonstrate substantial success, reflecting the growing interest in consumer goods and financial technology innovations. Healthcare and Engineering & Product Design are crucial as well, benefiting from technological advancements and the need for innovative solutions in critical sectors.
+
+As for the founders of the company, it is necessary to consider which area they came from - what they have studied in the university. University programs in Software and Computer Engineering and Engineering are the most linked to startup success, driving innovation in tech-focused industries which also comes more practical. Marketing and Economics also play a key role in building successful startups, with an emphasis on business acumen that can be applied in the industry such as B2B. While fields like Mathematics and Finance contribute to finance-driven ventures, more specialized programs like General Sciences and Molecular Sciences are more linked to healthcare industry. Tech and engineering programs are the primary drivers of startup success.
 
 <!-- CONTRIBUTING -->
 ## Contributing
