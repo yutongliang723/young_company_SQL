@@ -121,6 +121,22 @@ Use the `README.md` to get started.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
+## Project Folder Structure
+  data_for_python/  # the data used for Python mapping part (not in production)  
+  ├── .DS_Store  
+  ├── 2024 QS World University Rankings 1.2 (For qs.com) copy.xlsx  
+  ├── institutions_full.csv  
+  ├── program_category_output.xlsx  
+  ├── programs_founder.csv  
+  ├── qs_rank_2024.csv  
+  young_company/ # in production   
+  ├── .DS_Store  
+  ├── ER_Diagram.png  # as shown before  
+  ├── README.md  
+  ├── YC_production.sql  #the main sql file to run  
+  ├── analytical_dimensions.png  # for the data structure dimensions  
+  ├── mapping_qs.ipynb  # Python file used for mapping (reference only, not in production)  
+  └── yc_image.png  
 
 <!-- GETTING STARTED -->
 ## Getting Started
