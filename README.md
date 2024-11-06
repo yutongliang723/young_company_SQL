@@ -14,6 +14,7 @@
 
 
 <!-- TABLE OF CONTENTS -->
+<!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -34,6 +35,28 @@
       <a href="#usage">Usage</a>
       <ul>
         <li><a href="#data-structure-preview---er-diagram">Data Structure Preview - ER Diagram</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#analytical-plan">Analytical Plan</a>
+      <ul>
+        <li><a href="#industry-and-region-based-analysis">Industry and Region-Based Analysis</a>
+          <ul>
+            <li><a href="#key-metrics">Key Metrics</a></li>
+          </ul>
+        </li>
+        <li><a href="#educational-background-analysis">Educational Background Analysis</a>
+          <ul>
+            <li><a href="#key-metrics-1">Key Metrics</a></li>
+          </ul>
+        </li>
+        <li><a href="#database-architecture">Database Architecture</a>
+          <ul>
+            <li><a href="#analytical-data-layer">Analytical Data Layer</a></li>
+            <li><a href="#etl-extract-transform-load-processes">ETL (Extract, Transform, Load) Processes</a></li>
+            <li><a href="#data-mart-structure">Data Mart Structure</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li>
@@ -68,7 +91,6 @@
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
-
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
@@ -133,7 +155,7 @@ This step allows the relevant files to be put in the correct place.
 To set up the database structure and create necessary relationship, stored procedures, and view:
 
 1. Open the file `YC_production.sql` in MySQLWorkbench
-2. Run the script. The setup should complete in approximately 30 seconds.
+2. Run the script. The setup should complete in approximately 1 minute.
 
 
 ### Data Structure Preview - ER Diagram
@@ -162,7 +184,7 @@ The `RankIndustriesBySuccessIndex` and `RankCountriesAndRegions` stored procedur
 * Identify which industries have the highest average success index, providing insight into industry-specific success patterns.
 * Analyze geographic trends to see if startups from certain regions or countries have higher success rates.
 
-#### Key Metrics:
+#### Key Metrics
 
 * SuccessIndex by Industry
 * SuccessIndex by Region and Country
